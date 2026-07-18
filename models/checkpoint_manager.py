@@ -115,6 +115,9 @@ class CheckpointManager:
         """
         Reads the latest checkpoint path pointer for the given model name.
 
+        Supports both absolute paths (legacy) and bare directory names relative
+        to self.checkpoints_dir (cross-platform / Streamlit Cloud safe).
+
         Args:
             model_name: Model identifier name.
 
@@ -129,11 +132,26 @@ class CheckpointManager:
         try:
             with open(pointer_path, "r", encoding="utf-8") as f:
                 info = json.load(f)
-            checkpoint_path = Path(info.get("path", ""))
-            if checkpoint_path.exists():
-                app_logger.info(f"Found latest checkpoint for {model_name} at {checkpoint_path}")
-                return checkpoint_path
+
+            raw_path = info.get("path", "")
+            candidate = Path(raw_path)
+
+            # If absolute path exists (local Windows dev), use it directly
+            if candidate.is_absolute() and candidate.exists():
+                app_logger.info(f"Found latest checkpoint for {model_name} at {candidate}")
+                return candidate
+
+            # Treat as a relative directory name inside checkpoints_dir
+            relative_candidate = self.checkpoints_dir / candidate.name
+            if relative_candidate.exists():
+                app_logger.info(f"Found latest checkpoint for {model_name} at {relative_candidate}")
+                return relative_candidate
+
+            app_logger.warning(
+                f"Checkpoint path '{raw_path}' for {model_name} not found as absolute "
+                f"or relative to {self.checkpoints_dir}"
+            )
         except Exception as e:
             app_logger.error(f"Error loading checkpoint pointer file: {e}")
-        
+
         return None

@@ -2,5 +2,5 @@
     "model_name": "resnet50_transfer",
     "version": "v1",
     "timestamp": "20260718_104031",
-    "path": "C:\\Users\\banda\\Desktop\\Vision Product Recommendation\\models\\checkpoints\\resnet50_transfer_v1_20260718_104031"
+    "path": "resnet50_transfer_v1_20260718_104031"
 }

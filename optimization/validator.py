@@ -55,17 +55,23 @@ class SystemValidator:
             "evaluation": settings.EVALUATION_DIRECTORY
         }
 
+        # Optional dirs (expected to be absent on Streamlit Cloud)
+        optional_dirs = {"dataset"}
+
         for label, path in dirs_to_check.items():
             exists = path.exists()
             status["dirs"][label] = exists
-            if not exists:
+            if not exists and label not in optional_dirs:
                 status["healthy"] = False
 
         # 2. Check metadata CSV files
+        # raw_styles_csv is optional (absent on cloud — subset_metadata_csv is used instead)
         styles_csv = settings.DATASET_DIRECTORY / "styles.csv"
         subset_metadata = settings.SUBSET_DIRECTORY / "subset_metadata.csv"
         status["files"]["raw_styles_csv"] = styles_csv.exists()
         status["files"]["subset_metadata_csv"] = subset_metadata.exists()
+        if not subset_metadata.exists():
+            status["healthy"] = False
 
         # 3. Check embedding databases on disk
         base_dir = settings.EMBEDDING_DIRECTORY
