@@ -18,11 +18,16 @@ ENV/
 .coverage
 htmlcov/
 
-# Heavy Machine Learning Assets
+# Heavy Machine Learning Assets — raw dataset (too large for GitHub)
 dataset/
-data/
 fashion-dataset/
 images/
+
+# Exclude subset images but allow metadata CSV
+data/subset/images/
+data/raw/
+
+# Model weights (large binary files)
 models/checkpoints/
 models/weights/
 *.h5
@@ -30,6 +35,7 @@ models/weights/
 *.onnx
 *.pkl
 *.pb
+
 
 # Logs & temporary files
 logs/*.log
