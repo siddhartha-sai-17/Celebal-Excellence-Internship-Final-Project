@@ -1,0 +1,22 @@
+{
+    "dirs": {
+        "dataset": true,
+        "subset": true,
+        "models": true,
+        "embeddings": true,
+        "logs": true,
+        "evaluation": true
+    },
+    "files": {
+        "raw_styles_csv": true,
+        "subset_metadata_csv": true,
+        "baseline_embeddings": true,
+        "transfer_embeddings": true,
+        "siamese_embeddings": true
+    },
+    "models": {
+        "transfer_model_latest": true,
+        "siamese_model_latest": true
+    },
+    "healthy": true
+}

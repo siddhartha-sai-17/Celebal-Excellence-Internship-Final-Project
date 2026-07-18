@@ -1,0 +1,25 @@
+{
+    "metadata_exists": true,
+    "images_dir_exists": true,
+    "total_metadata_records": 1750,
+    "total_images_in_folder": 1749,
+    "missing_images_count": 1,
+    "missing_images_list": [
+        "39401"
+    ],
+    "corrupted_images_count": 0,
+    "corrupted_images_list": [],
+    "duplicate_metadata_ids_count": 0,
+    "duplicate_metadata_ids_list": [],
+    "invalid_format_count": 0,
+    "invalid_format_list": [],
+    "category_distribution": {
+        "Tshirts": 250,
+        "Shirts": 250,
+        "Casual Shoes": 250,
+        "Watches": 250,
+        "Handbags": 250,
+        "Sandals": 250,
+        "Jeans": 250
+    }
+}

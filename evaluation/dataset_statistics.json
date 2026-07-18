@@ -1,0 +1,21 @@
+{
+    "total_images": 1750,
+    "categories": [
+        "Tshirts",
+        "Shirts",
+        "Casual Shoes",
+        "Watches",
+        "Handbags",
+        "Sandals",
+        "Jeans"
+    ],
+    "images_per_category": {
+        "Tshirts": 250,
+        "Shirts": 250,
+        "Casual Shoes": 250,
+        "Watches": 250,
+        "Handbags": 250,
+        "Sandals": 250,
+        "Jeans": 250
+    }
+}

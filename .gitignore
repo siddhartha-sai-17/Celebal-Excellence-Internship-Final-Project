@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# Streamlit local state
+.streamlit/runtime/
+.streamlit/secret.toml
+
+# Pytest cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Heavy Machine Learning Assets
+dataset/
+data/
+fashion-dataset/
+images/
+models/checkpoints/
+models/weights/
+*.h5
+*.keras
+*.onnx
+*.pkl
+*.pb
+
+# Logs & temporary files
+logs/*.log
+logs/
+.ipynb_checkpoints/
+tmp/
+temp/
+
+# OS specific files
+.DS_Store
+Thumbs.db

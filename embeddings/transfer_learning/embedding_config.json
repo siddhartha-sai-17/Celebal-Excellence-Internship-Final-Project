@@ -1,0 +1,8 @@
+{
+    "timestamp": "2026-07-18T10:54:41.055377",
+    "num_embeddings": 1749,
+    "embedding_dimension": 512,
+    "model_name": "resnet50",
+    "dataset_size": 1749,
+    "model_type": "transfer_learning"
+}
