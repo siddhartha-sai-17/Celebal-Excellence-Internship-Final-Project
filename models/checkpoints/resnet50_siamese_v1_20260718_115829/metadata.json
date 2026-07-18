@@ -1,0 +1,20 @@
+{
+    "model_name": "resnet50_siamese",
+    "version": "v1",
+    "timestamp": "20260718_115829",
+    "backbone": "resnet50",
+    "image_size": [
+        224,
+        224
+    ],
+    "embedding_dimension": 512,
+    "epochs": 2,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "optimizer": "adam",
+    "loss_function": "categorical_crossentropy",
+    "metrics": {
+        "val_loss": 0.3226524889469147,
+        "train_time_sec": 514.1584978000028
+    }
+}

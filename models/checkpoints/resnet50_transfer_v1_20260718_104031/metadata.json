@@ -1,0 +1,21 @@
+{
+    "model_name": "resnet50_transfer",
+    "version": "v1",
+    "timestamp": "20260718_104031",
+    "backbone": "resnet50",
+    "image_size": [
+        224,
+        224
+    ],
+    "embedding_dimension": 512,
+    "epochs": 2,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "optimizer": "adam",
+    "loss_function": "categorical_crossentropy",
+    "metrics": {
+        "val_loss": 1.82309889793396,
+        "val_accuracy": 0.3742857277393341,
+        "train_time_sec": 757.0457980000065
+    }
+}
