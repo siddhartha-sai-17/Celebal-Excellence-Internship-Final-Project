@@ -23,18 +23,25 @@ dataset/
 fashion-dataset/
 images/
 
-# Exclude subset images but allow metadata CSV
-data/subset/images/
+# Exclude raw data but allow subset images and metadata CSV
+!data/subset/images/
+!data/subset/images/*.jpg
 data/raw/
 
 # Model weights (large binary files)
-models/checkpoints/
 models/weights/
 *.h5
 *.keras
 *.onnx
 *.pkl
 *.pb
+
+# Specifically unignore model checkpoint files so they are uploaded to GitHub
+!models/checkpoints/
+!models/checkpoints/**/*.keras
+!models/checkpoints/**/*.json
+!models/checkpoints/**/*.npy
+
 
 
 # Logs & temporary files
