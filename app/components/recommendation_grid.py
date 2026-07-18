@@ -56,11 +56,24 @@ def render_recommendation_grid(recommendations: List[Dict[str, Any]]) -> None:
                     else:
                         sim_color = "#f87171"
 
-                    # Product image first
-                    img_path = Path(item["image_path"])
-                    if not img_path.is_absolute():
-                        img_path = settings.BASE_DIR / img_path
-                    if img_path.exists():
+                    # Resolve product image — check committed subset images first (200x200),
+                    # then fall back to the full local dataset folder.
+                    img_id = str(item.get("image_id", ""))
+                    img_name = f"{img_id}.jpg" if img_id else ""
+                    raw_path = Path(item.get("image_path", ""))
+                    if raw_path and not raw_path.is_absolute():
+                        raw_path = settings.BASE_DIR / raw_path
+
+                    # Priority: committed subset images → full raw dataset
+                    subset_img = settings.SUBSET_DIRECTORY / "images" / img_name
+                    if img_name and subset_img.exists():
+                        img_path = subset_img
+                    elif raw_path and raw_path.exists():
+                        img_path = raw_path
+                    else:
+                        img_path = None
+
+                    if img_path and img_path.exists():
                         try:
                             st.image(str(img_path), use_column_width=True)
                         except Exception as e:
