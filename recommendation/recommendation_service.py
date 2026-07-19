@@ -117,25 +117,34 @@ class RecommendationService:
         t_sim = time.perf_counter()
         scores = None
 
-        if use_faiss:
-            # Attempt FAISS matching
+        # When metadata filters are active, FAISS is counterproductive: it returns
+        # only the global top-K nearest neighbors, which may entirely exclude the
+        # filtered category (e.g. all top-100 FAISS hits are shoes when user asks
+        # for Watches → 0 results). With only 1,750 vectors, full cosine similarity
+        # over the entire database takes < 1ms, so FAISS overhead is not needed.
+        has_metadata_filter = any([
+            gender_filter, category_filter, color_filter, season_filter, usage_filter
+        ])
+
+        if use_faiss and not has_metadata_filter:
+            # FAISS is only beneficial for unfiltered searches over large collections
             faiss_eng = self.cache.get_faiss_engine(source_name, db_embs)
             if faiss_eng is not None:
-                # Query index with top_k * 5 to allow metadata filtering buffer
                 faiss_res = faiss_eng.search(query_emb, top_k=min(top_k * 10, len(db_embs)))
                 if faiss_res is not None:
                     sims, idxs = faiss_res
-                    # Convert to a full scores array representing matches for matching indices
                     scores = np.zeros(len(db_embs), dtype=np.float32)
                     for s, idx in zip(sims, idxs):
                         if idx >= 0:
                             scores[idx] = s
 
         if scores is None:
-            # Fallback to standard vectorized Cosine Similarity
+            # Full vectorised cosine similarity — used for all filtered searches
+            # and as FAISS fallback for unfiltered searches
             scores = SimilarityEngine.compute_similarity(query_emb, db_embs, metric=settings.SIMILARITY_ALGORITHM)
 
         latencies["similarity_search"] = time.perf_counter() - t_sim
+
 
         # 7. Rank and Filter results
         t_rank = time.perf_counter()
