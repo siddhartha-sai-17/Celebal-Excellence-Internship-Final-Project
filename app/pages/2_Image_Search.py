@@ -103,11 +103,15 @@ def main() -> None:
                 with st.spinner("Analyzing image features and matching products..."):
                     # Force reload modules to bypass Streamlit Cloud stale memory caches
                     import importlib
+                    import models.model_factory
+                    import models.model_loader
                     import recommendation.cache_manager
                     import recommendation.ranking_engine
                     import recommendation.recommendation_service
                     import recommendation.recommendation_engine
                     
+                    importlib.reload(models.model_factory)
+                    importlib.reload(models.model_loader)
                     importlib.reload(recommendation.cache_manager)
                     importlib.reload(recommendation.ranking_engine)
                     importlib.reload(recommendation.recommendation_service)
