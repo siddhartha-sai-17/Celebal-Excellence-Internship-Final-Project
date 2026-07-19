@@ -126,6 +126,13 @@ def main() -> None:
                     
                     st.session_state["recommendations"] = recs
                     st.session_state["latencies"] = latencies
+                    
+                    st.info(
+                        f"⚙️ **Main Search Debugger:** "
+                        f"Found **{len(recs)}** results. "
+                        f"Parameters sent to recommender: "
+                        f"gender={gender}, category={category}, color={color}, season={season}, usage={usage}"
+                    )
 
             # Render latencies and metrics cards
             if st.session_state["latencies"] is not None:
