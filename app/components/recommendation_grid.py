@@ -58,10 +58,11 @@ def render_recommendation_grid(recommendations: List[Dict[str, Any]]) -> None:
 
                     # Resolve product image — check committed subset images first (200x200),
                     # then fall back to the full local dataset folder.
-                    img_id = str(item.get("image_id", ""))
+                    # NOTE: the ranking engine stores product id under key "id", not "image_id"
+                    img_id = str(item.get("id", ""))
                     img_name = f"{img_id}.jpg" if img_id else ""
                     raw_path = Path(item.get("image_path", ""))
-                    if raw_path and not raw_path.is_absolute():
+                    if raw_path.parts and not raw_path.is_absolute():
                         raw_path = settings.BASE_DIR / raw_path
 
                     # Priority: committed subset images → full raw dataset

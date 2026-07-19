@@ -102,53 +102,49 @@ def main() -> None:
             # Render Explainability (Grad-CAM Activation Heatmaps)
             st.markdown("---")
             st.markdown("### 🧠 Explainable AI: Activation Maps (Grad-CAM)")
-            
+
             with st.expander("Why were these products recommended?"):
                 st.write(
-                    "Grad-CAM visualizes which regional features in your uploaded image (such as collars, sleeves, dials, strap buckles, or heels) "
+                    "Grad-CAM visualizes which regional features in your uploaded image "
+                    "(such as collars, sleeves, dials, strap buckles, or heels) "
                     "contributed most to the generated embedding representation."
                 )
-                
-                # Run Grad-CAM calculation
-                with st.spinner("Generating attention heatmaps..."):
-                    try:
-                        # Load model using selector + cache
-                        from recommendation.embedding_selector import EmbeddingSelector
-                        from recommendation.cache_manager import CacheManager
-                        from preprocessing.image_preprocessor import ImagePreprocessor
-                        from utils.image_utils import generate_gradcam, overlay_heatmap_on_image
+                # Gate behind a button so heavy model load only runs on demand
+                if st.button("🔍 Generate Activation Heatmap", key="gradcam_btn"):
+                    with st.spinner("Generating attention heatmaps..."):
+                        try:
+                            from recommendation.embedding_selector import EmbeddingSelector
+                            from recommendation.cache_manager import CacheManager
+                            from preprocessing.image_preprocessor import ImagePreprocessor
+                            from utils.image_utils import generate_gradcam, overlay_heatmap_on_image
 
-                        _, checkpoint_path = EmbeddingSelector.get_paths(st.session_state["selected_model"])
-                        cache = CacheManager()
-                        model = cache.get_model(st.session_state["selected_model"], checkpoint_path)
-                        
-                        img_tensor = ImagePreprocessor.preprocess_for_inference(st.session_state["query_image"])
+                            _, checkpoint_path = EmbeddingSelector.get_paths(st.session_state["selected_model"])
+                            cache = CacheManager()
+                            model = cache.get_model(st.session_state["selected_model"], checkpoint_path)
 
-                        if model and img_tensor is not None:
-                            # Generate Grad-CAM heatmap
-                            heatmap = generate_gradcam(model, img_tensor)
-                            
-                            if heatmap is not None:
-                                # Save uploader query locally to overlay
-                                temp_query_path = settings.SUBSET_DIRECTORY / "temp_query_gradcam.jpg"
-                                st.session_state["query_image"].save(temp_query_path)
+                            img_tensor = ImagePreprocessor.preprocess_for_inference(st.session_state["query_image"])
 
-                                superimposed_img = overlay_heatmap_on_image(temp_query_path, heatmap)
-                                
-                                # Render side-by-side comparison
-                                col_orig, col_grad = st.columns(2)
-                                with col_orig:
-                                    st.image(st.session_state["query_image"], caption="Original Query", use_column_width=True)
-                                with col_grad:
-                                    st.image(superimposed_img, caption="Activation Focus Overlay", use_column_width=True)
-                                
-                                # Clean up temp query image
-                                if temp_query_path.exists():
-                                    temp_query_path.unlink()
-                            else:
-                                st.warning("Grad-CAM heatmap calculation returned empty. Convolution layer auto-detection failed.")
-                    except Exception as e:
-                        st.warning(f"Unable to render Grad-CAM explainability maps: {e}")
+                            if model and img_tensor is not None:
+                                heatmap = generate_gradcam(model, img_tensor)
+
+                                if heatmap is not None:
+                                    temp_query_path = settings.SUBSET_DIRECTORY / "temp_query_gradcam.jpg"
+                                    st.session_state["query_image"].save(temp_query_path)
+                                    superimposed_img = overlay_heatmap_on_image(temp_query_path, heatmap)
+
+                                    col_orig, col_grad = st.columns(2)
+                                    with col_orig:
+                                        st.image(st.session_state["query_image"], caption="Original Query", use_column_width=True)
+                                    with col_grad:
+                                        st.image(superimposed_img, caption="Activation Focus Overlay", use_column_width=True)
+
+                                    if temp_query_path.exists():
+                                        temp_query_path.unlink()
+                                else:
+                                    st.warning("Grad-CAM heatmap calculation returned empty. Convolution layer auto-detection failed.")
+                        except Exception as e:
+                            st.warning(f"Unable to render Grad-CAM explainability maps: {e}")
+
 
     else:
         # Prompt search uploader start
