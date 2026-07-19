@@ -96,8 +96,22 @@ def main() -> None:
                 render_metrics_card(st.session_state["latencies"], st.session_state["enable_faiss"])
 
             # Render recommendations cards
-            if st.session_state["recommendations"] is not None:
-                render_recommendation_grid(st.session_state["recommendations"])
+            recs = st.session_state["recommendations"]
+            if recs is not None:
+                render_recommendation_grid(recs)
+
+                # If top results span multiple categories, show a filter tip
+                if recs:
+                    top_cats = [r.get("category", "") for r in recs[:5]]
+                    unique_cats = set(top_cats)
+                    if len(unique_cats) > 1 or (len(recs) >= 3 and len(unique_cats) == 1 and
+                                                 list(unique_cats)[0].lower() not in ["watches", "watch"]):
+                        st.info(
+                            "💡 **Tip — Getting wrong category?** "
+                            "Use the **Category** filter in the left sidebar to restrict results "
+                            "to a specific product type (e.g. 'Watches', 'Shirts', 'Handbags'). "
+                            "The engine will automatically find the best matches within that category."
+                        )
 
             # Render Explainability (Grad-CAM Activation Heatmaps)
             st.markdown("---")
