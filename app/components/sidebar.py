@@ -27,22 +27,7 @@ def render_sidebar() -> None:
         )
         st.markdown("---")
 
-        # Theme Mode Selector
-        theme_options = {
-            "🌙 Dark Mode": "dark",
-            "☀️ Light Mode": "light"
-        }
-        if "theme_mode" not in st.session_state:
-            st.session_state["theme_mode"] = "dark"
-            
-        selected_theme = st.selectbox(
-            "🎨 Interface Theme",
-            options=list(theme_options.keys()),
-            index=list(theme_options.values()).index(st.session_state["theme_mode"])
-        )
-        st.session_state["theme_mode"] = theme_options[selected_theme]
-
-        st.markdown("---")
+        st.session_state["theme_mode"] = "dark"
 
         # 1. Model selection with icons
         st.markdown('<div style="font-size:0.75rem;font-weight:600;color:#a78bfa;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.4rem;">Embedding Model</div>', unsafe_allow_html=True)
