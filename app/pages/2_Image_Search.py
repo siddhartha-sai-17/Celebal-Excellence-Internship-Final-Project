@@ -134,10 +134,10 @@ def main() -> None:
             # Render recommendations cards
             recs = st.session_state["recommendations"]
             if recs is not None:
-                render_recommendation_grid(recs)
-
-                # If top results span multiple categories, show a filter tip
                 if recs:
+                    render_recommendation_grid(recs)
+
+                    # If top results span multiple categories, show a filter tip
                     top_cats = [r.get("category", "") for r in recs[:5]]
                     unique_cats = set(top_cats)
                     if len(unique_cats) > 1 or (len(recs) >= 3 and len(unique_cats) == 1 and
@@ -148,6 +148,40 @@ def main() -> None:
                             "to a specific product type (e.g. 'Watches', 'Shirts', 'Handbags'). "
                             "The engine will automatically find the best matches within that category."
                         )
+                else:
+                    st.warning("⚠️ **No visually similar products found matching the criteria.**")
+                    
+                    # ── Debugger block for zero results ───────────────────────────
+                    with st.expander("🛠️ Diagnostics: Why are there 0 results?", expanded=True):
+                        try:
+                            import numpy as np
+                            from recommendation.embedding_selector import EmbeddingSelector
+                            from recommendation.cache_manager import CacheManager
+                            from preprocessing.image_preprocessor import ImagePreprocessor
+                            
+                            model_name = st.session_state["selected_model"]
+                            emb_dir, checkpoint_path = EmbeddingSelector.get_paths(model_name)
+                            cache = CacheManager()
+                            model = cache.get_model(model_name, checkpoint_path)
+                            db_embs, db_meta = cache.get_database(model_name, emb_dir)
+                            
+                            img_tensor = ImagePreprocessor.preprocess_for_inference(st.session_state["query_image"])
+                            
+                            st.write(f"**Model selected:** `{model_name}`")
+                            st.write(f"**Checkpoint path resolved:** `{checkpoint_path}`")
+                            st.write(f"**Model load status:** `{'Success' if model is not None else 'Failed'}`")
+                            st.write(f"**Database embeddings found:** `{'Yes' if db_embs is not None else 'No'}` (shape: `{db_embs.shape if db_embs is not None else 'N/A'}`)")
+                            st.write(f"**Database metadata rows:** `{len(db_meta) if db_meta is not None else 'N/A'}`")
+                            
+                            if model is not None and img_tensor is not None:
+                                emb = model(img_tensor, training=False).numpy().squeeze()
+                                st.write(f"**Query Embedding Shape:** `{emb.shape}`")
+                                st.write(f"**Query Embedding contains NaNs:** `{np.isnan(emb).any()}`")
+                                st.write(f"**Query Embedding Min/Max/Mean:** `{np.min(emb):.4f}` / `{np.max(emb):.4f}` / `{np.mean(emb):.4f}`")
+                        except Exception as debug_err:
+                            st.error(f"Diagnostics runner error: {debug_err}")
+                    # ──────────────────────────────────────────────────────────────
+
 
             # Render Explainability (Grad-CAM Activation Heatmaps)
             st.markdown("---")
