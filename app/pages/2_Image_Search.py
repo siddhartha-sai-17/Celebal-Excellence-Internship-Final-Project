@@ -127,11 +127,17 @@ def main() -> None:
                     st.session_state["recommendations"] = recs
                     st.session_state["latencies"] = latencies
                     
+                    from recommendation.ranking_engine import RankingEngine
+                    trace_text = "\n".join(RankingEngine.last_trace)
                     st.info(
-                        f"⚙️ **Main Search Debugger:** "
-                        f"Found **{len(recs)}** results. "
-                        f"Parameters sent to recommender: "
-                        f"gender={gender}, category={category}, color={color}, season={season}, usage={usage}"
+                        f"⚙️ **Main Search Debugger:**\n\n"
+                        f"Found **{len(recs)}** results.\n\n"
+                        f"**Parameters sent to recommender:**\n"
+                        f"gender={gender}, category={category}, color={color}, season={season}, usage={usage}\n\n"
+                        f"**Internal Ranking Trace:**\n"
+                        f"```\n"
+                        f"{trace_text}\n"
+                        f"```"
                     )
 
             # Render latencies and metrics cards

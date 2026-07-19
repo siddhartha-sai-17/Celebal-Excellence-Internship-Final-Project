@@ -28,6 +28,7 @@ class RankingEngine:
     """
     Applies constraints, sorts raw scores, filters recommendations, and formats response lists.
     """
+    last_trace: List[str] = []
 
     @staticmethod
     def rank_and_filter(scores: np.ndarray,
@@ -70,21 +71,39 @@ class RankingEngine:
         """
         app_logger.info("Ranking and filtering recommendations...")
 
+        # Initialize/reset trace log
+        trace = []
+        trace.append(f"rank_and_filter start. scores shape: {scores.shape}, metadata rows: {len(metadata_df)}")
+        trace.append(f"Passed filters: gender={gender_filter}, category={category_filter}, color={color_filter}, season={season_filter}, usage={usage_filter}")
+        trace.append(f"Threshold: {similarity_threshold}, Top-K: {top_k}")
+        
         # ── Step 1: Attach scores to metadata rows ──────────────────────────
         scored = []
+        cat_match = 0
+        gen_match = 0
+        all_match = 0
+        
         for idx, row in metadata_df.iterrows():
             product_id = str(row["id"])
             # Exclude query image
             if query_id and product_id == query_id:
                 continue
 
+            # Check index alignment safety
+            if idx >= len(scores):
+                trace.append(f"IndexError warning: metadata index {idx} >= scores size {len(scores)}")
+                continue
             score = float(scores[idx])
 
             # ── Step 2: Apply metadata filters FIRST ────────────────────────
-            if gender_filter and str(row.get("gender", "")).lower() != gender_filter.lower():
-                continue
             if category_filter and str(row.get("articleType", "")).lower() != category_filter.lower():
                 continue
+            cat_match += 1
+            
+            if gender_filter and str(row.get("gender", "")).lower() != gender_filter.lower():
+                continue
+            gen_match += 1
+            
             if color_filter and str(row.get("baseColour", "")).lower() != color_filter.lower():
                 continue
             if season_filter and str(row.get("season", "")).lower() != season_filter.lower():
@@ -92,10 +111,21 @@ class RankingEngine:
             if usage_filter and str(row.get("usage", "")).lower() != usage_filter.lower():
                 continue
 
+            all_match += 1
             scored.append((score, product_id, row))
+
+        trace.append(f"Filtering trace:")
+        trace.append(f"  Passed category: {cat_match}")
+        trace.append(f"  Passed cat + gender: {gen_match}")
+        trace.append(f"  Passed all filters (scored list): {all_match}")
 
         # Sort all category-filtered candidates by score descending
         scored.sort(key=lambda x: x[0], reverse=True)
+        if scored:
+            trace.append(f"  Top 3 scored: {scored[0][0]:.4f}, {scored[1][0]:.4f}, {scored[2][0]:.4f}" if len(scored) >= 3 else f"  Scored size: {len(scored)}")
+        
+        RankingEngine.last_trace = trace
+
 
         # ── Step 3: Apply threshold with auto-fallback ───────────────────────
         # When a category filter is active, relax threshold progressively so the
