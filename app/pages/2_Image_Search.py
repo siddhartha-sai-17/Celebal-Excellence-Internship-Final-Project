@@ -57,17 +57,25 @@ def main() -> None:
             "bag": "Handbags", "handbag": "Handbags", "purse": "Handbags",
         }
         current_category_filter = st.session_state.get("filters", {}).get("category", "All")
-        if current_category_filter == "All" and img_name:
+        hint_applied = st.session_state.get("category_hint_applied_for")
+
+        # If a new image is uploaded and category is not set, auto-select the matching category
+        if img_name and hint_applied != img_name:
             name_lower = img_name.lower().replace("_", " ").replace("-", " ")
             suggested_cat = next(
                 (cat for kw, cat in _KEYWORD_MAP.items() if kw in name_lower), None
             )
             if suggested_cat:
-                st.warning(
-                    f"🎯 **Filename hint detected: looks like a '{suggested_cat}' image.** "
-                    f"For accurate results, set **Category = '{suggested_cat}'** "
-                    f"in the Filters panel on the left sidebar, then click Generate Recommendations."
-                )
+                st.session_state["filters"]["category"] = suggested_cat
+                st.session_state["category_hint_applied_for"] = img_name
+                st.rerun()
+
+        # Display confirmation of auto-filtering
+        if hint_applied == img_name and current_category_filter != "All":
+            st.info(
+                f"🎯 **Category filter auto-set to '{current_category_filter}'** "
+                f"based on your uploaded filename. Click Generate Recommendations to search."
+            )
         # ─────────────────────────────────────────────────────────────────────
 
         # Trigger search button
@@ -83,7 +91,10 @@ def main() -> None:
             st.session_state["query_image_path"] = None
             st.session_state["recommendations"] = None
             st.session_state["latencies"] = None
+            st.session_state["category_hint_applied_for"] = None
+            st.session_state["filters"]["category"] = "All"
             st.rerun()
+
 
         # Run recommendations
         if run_clicked or st.session_state["recommendations"] is not None:
