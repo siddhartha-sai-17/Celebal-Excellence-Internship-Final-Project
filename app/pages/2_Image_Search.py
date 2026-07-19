@@ -181,14 +181,33 @@ def main() -> None:
                     unique_cats = set(top_cats)
                     if len(unique_cats) > 1 or (len(recs) >= 3 and len(unique_cats) == 1 and
                                                  list(unique_cats)[0].lower() not in ["watches", "watch"]):
-                        st.info(
-                            "💡 **Tip — Getting wrong category?** "
-                            "Use the **Category** filter in the left sidebar to restrict results "
-                            "to a specific product type (e.g. 'Watches', 'Shirts', 'Handbags'). "
-                            "The engine will automatically find the best matches within that category."
+                        st.markdown(
+                            '<div class="glass-card fade-in" style="display: flex; align-items: center; gap: 0.9rem; padding: 1rem 1.4rem; margin-top: 1rem;">'
+                            '<div style="font-size: 1.4rem; line-height: 1;">💡</div>'
+                            '<div>'
+                            '<div style="font-family: \'Outfit\', sans-serif; font-weight: 700; font-size: 0.95rem;">Tip — Getting wrong category?</div>'
+                            '<div style="font-size: 0.84rem; opacity: 0.8; margin-top: 0.15rem; line-height: 1.4;">'
+                            'Use the <strong>Category</strong> filter in the left sidebar to restrict results '
+                            'to a specific product type (e.g. \'Watches\', \'Shirts\', \'Handbags\'). '
+                            'The engine will automatically find the best matches within that category.'
+                            '</div>'
+                            '</div>'
+                            '</div>',
+                            unsafe_allow_html=True
                         )
                 else:
-                    st.warning("⚠️ **No visually similar products found matching the criteria.**")
+                    st.markdown(
+                        '<div class="glass-card fade-in" style="display: flex; align-items: center; gap: 0.9rem; padding: 1.2rem 1.5rem; border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.05);">'
+                        '<div style="font-size: 1.5rem; line-height: 1;">⚠️</div>'
+                        '<div>'
+                        '<div style="font-family: \'Outfit\', sans-serif; font-weight: 700; font-size: 1rem; color: #fbbf24;">No results found</div>'
+                        '<div style="font-size: 0.88rem; opacity: 0.8; margin-top: 0.2rem; line-height: 1.45;">'
+                        'No visually similar products found matching the selected criteria. Try adjusting filters or similarity threshold.'
+                        '</div>'
+                        '</div>'
+                        '</div>',
+                        unsafe_allow_html=True
+                    )
                     
                     # ── Debugger block for zero results ───────────────────────────
                     with st.expander("🛠️ Diagnostics: Why are there 0 results?", expanded=True):
@@ -362,7 +381,18 @@ def main() -> None:
 
     else:
         # Prompt search uploader start
-        st.info("💡 **Awaiting Query Image**: Please upload or drag-and-drop a product image to initiate similar search queries.")
+        st.markdown(
+            '<div class="glass-card fade-in" style="display: flex; align-items: center; gap: 0.9rem; padding: 1.2rem 1.5rem;">'
+            '<div style="font-size: 1.5rem; line-height: 1;">💡</div>'
+            '<div>'
+            '<div style="font-family: \'Outfit\', sans-serif; font-weight: 700; font-size: 1rem;">Awaiting Query Image</div>'
+            '<div style="font-size: 0.88rem; opacity: 0.8; margin-top: 0.2rem; line-height: 1.45;">'
+            'Please upload or drag-and-drop a product image to initiate similar search queries.'
+            '</div>'
+            '</div>'
+            '</div>',
+            unsafe_allow_html=True
+        )
 
     render_footer()
 
