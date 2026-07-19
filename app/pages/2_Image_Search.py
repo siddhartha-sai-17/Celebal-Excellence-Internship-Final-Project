@@ -158,29 +158,64 @@ def main() -> None:
                             from recommendation.embedding_selector import EmbeddingSelector
                             from recommendation.cache_manager import CacheManager
                             from preprocessing.image_preprocessor import ImagePreprocessor
+                            from recommendation.similarity_engine import SimilarityEngine
                             
                             model_name = st.session_state["selected_model"]
                             emb_dir, checkpoint_path = EmbeddingSelector.get_paths(model_name)
                             cache = CacheManager()
                             model = cache.get_model(model_name, checkpoint_path)
                             db_embs, db_meta = cache.get_database(model_name, emb_dir)
-                            
                             img_tensor = ImagePreprocessor.preprocess_for_inference(st.session_state["query_image"])
                             
-                            st.write(f"**Model selected:** `{model_name}`")
-                            st.write(f"**Checkpoint path resolved:** `{checkpoint_path}`")
-                            st.write(f"**Model load status:** `{'Success' if model is not None else 'Failed'}`")
-                            st.write(f"**Database embeddings found:** `{'Yes' if db_embs is not None else 'No'}` (shape: `{db_embs.shape if db_embs is not None else 'N/A'}`)")
-                            st.write(f"**Database metadata rows:** `{len(db_meta) if db_meta is not None else 'N/A'}`")
+                            lines = []
+                            lines.append(f"Model Selected: {model_name}")
+                            lines.append(f"Checkpoint Path: {checkpoint_path}")
+                            lines.append(f"Model Load Status: {'SUCCESS' if model is not None else 'FAILED'}")
+                            lines.append(f"Database Embeddings: {'FOUND' if db_embs is not None else 'NOT FOUND'}")
+                            if db_embs is not None:
+                                lines.append(f"  Shape: {db_embs.shape}")
+                            lines.append(f"Database Metadata: {'FOUND' if db_meta is not None else 'NOT FOUND'}")
+                            if db_meta is not None:
+                                lines.append(f"  Rows count: {len(db_meta)}")
+                                lines.append(f"  Columns: {list(db_meta.columns)}")
                             
-                            if model is not None and img_tensor is not None:
-                                emb = model(img_tensor, training=False).numpy().squeeze()
-                                st.write(f"**Query Embedding Shape:** `{emb.shape}`")
-                                st.write(f"**Query Embedding contains NaNs:** `{np.isnan(emb).any()}`")
-                                st.write(f"**Query Embedding Min/Max/Mean:** `{np.min(emb):.4f}` / `{np.max(emb):.4f}` / `{np.mean(emb):.4f}`")
+                            if model is not None and img_tensor is not None and db_embs is not None and db_meta is not None:
+                                # Extract query embedding
+                                q_emb = model(img_tensor, training=False).numpy().squeeze()
+                                lines.append(f"Query Embedding Shape: {q_emb.shape}")
+                                q_nan = np.isnan(q_emb).any()
+                                lines.append(f"Query Embedding contains NaNs: {q_nan}")
+                                if not q_nan:
+                                    lines.append(f"Query Embedding Min/Max/Mean: {np.min(q_emb):.4f} / {np.max(q_emb):.4f} / {np.mean(q_emb):.4f}")
+                                
+                                # Compute similarity
+                                scores = SimilarityEngine.compute_similarity(q_emb, db_embs, metric=settings.SIMILARITY_ALGORITHM)
+                                lines.append(f"Similarity Scores count: {len(scores)}")
+                                s_nan = np.isnan(scores).any()
+                                lines.append(f"Similarity Scores contain NaNs: {s_nan}")
+                                if not s_nan:
+                                    lines.append(f"Similarity Scores Min/Max/Mean: {np.min(scores):.4f} / {np.max(scores):.4f} / {np.mean(scores):.4f}")
+                                
+                                # Category checks
+                                current_cat = st.session_state["filters"].get("category", "All")
+                                lines.append(f"Current Category Filter: {current_cat}")
+                                
+                                # Check matches in metadata
+                                if "articleType" in db_meta.columns:
+                                    cat_mask = db_meta["articleType"].str.lower() == current_cat.lower()
+                                    cat_count = cat_mask.sum()
+                                    lines.append(f"Database rows matching '{current_cat}': {cat_count}")
+                                    if cat_count > 0:
+                                        cat_scores = scores[cat_mask]
+                                        lines.append(f"  Filtered scores Min/Max/Mean: {np.min(cat_scores):.4f} / {np.max(cat_scores):.4f} / {np.mean(cat_scores):.4f}")
+                                else:
+                                    lines.append("ERROR: 'articleType' column missing in metadata!")
+                                    
+                            st.code("\n".join(lines))
                         except Exception as debug_err:
                             st.error(f"Diagnostics runner error: {debug_err}")
                     # ──────────────────────────────────────────────────────────────
+
 
 
             # Render Explainability (Grad-CAM Activation Heatmaps)
