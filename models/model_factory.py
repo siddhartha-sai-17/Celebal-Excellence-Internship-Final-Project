@@ -45,26 +45,27 @@ class ModelFactory:
     def build_embedding_model(model_name: str = settings.MODEL_NAME,
                               embedding_dim: int = settings.EMBEDDING_DIMENSION,
                               dropout_rate: float = settings.DROPOUT_RATE,
-                              freeze_backbone: bool = True) -> tf.keras.Model:
+                              freeze_backbone: bool = True,
+                              is_baseline: bool = False) -> tf.keras.Model:
         """
-        Builds the standard embedding model (Backbone + EmbeddingHead).
-
-        Args:
-            model_name: Type of backbone.
-            embedding_dim: Output dimension.
-            dropout_rate: Dropout rate.
-            freeze_backbone: If True, freezes backbone weights.
-
-        Returns:
-            tf.keras.Model containing the full embedding pipeline.
+        Builds the standard embedding model.
+        For baseline models (is_baseline=True), outputs L2-normalized Global Average Pooled backbone features directly.
+        For trained models, outputs projection through EmbeddingHead.
         """
-        app_logger.info(f"Building Embedding Model using backbone: {model_name}...")
+        app_logger.info(f"Building Embedding Model using backbone: {model_name} (is_baseline={is_baseline})...")
         backbone = ModelFactory.get_backbone(model_name, freeze=freeze_backbone)
         
         # Build Keras Functional model
         inputs = tf.keras.Input(shape=(*settings.IMAGE_SIZE, 3), name="image_input")
         features = backbone(inputs)
-        embeddings = EmbeddingHead(embedding_dim=embedding_dim, dropout_rate=dropout_rate, name="embedding_head")(features)
+        
+        if is_baseline:
+            # Baseline zero-shot CNN uses backbone features directly
+            gap = tf.keras.layers.GlobalAveragePooling2D(name="baseline_gap")(features)
+            embeddings = tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=-1), name="baseline_l2")(gap)
+        else:
+            # Trained models use the projection EmbeddingHead
+            embeddings = EmbeddingHead(embedding_dim=embedding_dim, dropout_rate=dropout_rate, name="embedding_head")(features)
         
         model = tf.keras.Model(inputs=inputs, outputs=embeddings, name=f"{model_name}_embedding_model")
         app_logger.info("Embedding Model built successfully.")

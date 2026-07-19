@@ -62,7 +62,12 @@ class RecommendationService:
         Returns:
             A tuple of (recommendations_list, latency_metrics_dict).
         """
-        recommendation_logger.info(f"Recommendation request started using source: {source_name}")
+        recommendation_logger.info(
+            f"Recommendation request started using source: {source_name}. "
+            f"Filters: gender={gender_filter}, category={category_filter}, "
+            f"color={color_filter}, season={season_filter}, usage={usage_filter}, "
+            f"threshold={similarity_threshold}, FAISS={use_faiss}"
+        )
         start_time = time.perf_counter()
         
         latencies: Dict[str, float] = {

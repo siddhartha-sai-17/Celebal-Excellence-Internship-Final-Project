@@ -47,16 +47,10 @@ class ModelLoader:
 
     @staticmethod
     def load_embedding_model(model_name: str = settings.MODEL_NAME, 
-                             checkpoint_dir: Optional[Path] = None) -> Optional[tf.keras.Model]:
+                             checkpoint_dir: Optional[Path] = None,
+                             is_baseline: bool = False) -> Optional[tf.keras.Model]:
         """
         Builds the embedding model and, if checkpoint_dir is provided, loads the weights.
-
-        Args:
-            model_name: Name of backbone (e.g. 'resnet50').
-            checkpoint_dir: Directory containing model weights or model.keras.
-
-        Returns:
-            tf.keras.Model containing the embedding model, or None if building/loading failed.
         """
         try:
             # Rebuild architecture
@@ -64,7 +58,8 @@ class ModelLoader:
                 model_name=model_name,
                 embedding_dim=settings.EMBEDDING_DIMENSION,
                 dropout_rate=settings.DROPOUT_RATE,
-                freeze_backbone=False  # Make it false so weights can load trainable values if any
+                freeze_backbone=False,  # Make it false so weights can load trainable values if any
+                is_baseline=is_baseline
             )
 
             if checkpoint_dir is not None:

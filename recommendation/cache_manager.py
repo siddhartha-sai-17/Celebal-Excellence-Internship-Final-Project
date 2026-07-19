@@ -52,7 +52,8 @@ class CacheManager:
         from models.model_loader import ModelLoader
         model = ModelLoader.load_embedding_model(
             model_name=settings.MODEL_NAME, 
-            checkpoint_dir=checkpoint_path
+            checkpoint_dir=checkpoint_path,
+            is_baseline=(source_name.lower().strip() == "baseline")
         )
         if model is not None:
             self._models[cache_key] = model

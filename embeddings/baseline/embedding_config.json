@@ -1,7 +1,7 @@
 {
-    "timestamp": "2026-07-18T10:23:03.534894",
+    "timestamp": "2026-07-19T17:26:38.177803",
     "num_embeddings": 1749,
-    "embedding_dimension": 512,
+    "embedding_dimension": 2048,
     "model_name": "resnet50",
     "dataset_size": 1749,
     "model_type": "baseline"

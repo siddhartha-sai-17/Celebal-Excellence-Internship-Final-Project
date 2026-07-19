@@ -101,8 +101,11 @@ def download_fashion_dataset(target_dir: Path) -> bool:
             )
             return False
 
+    # Set Kaggle config directory to a writable workspace directory before importing kaggle
+    os.environ["KAGGLE_CONFIG_DIR"] = str(target_dir.parent)
+
     try:
-        import kaggle  # noqa: F401 — imported here to avoid startup crashes
+        import kaggle  # noqa: F401
         from kaggle.api.kaggle_api_extended import KaggleApiExtended  # type: ignore
 
         api = KaggleApiExtended()

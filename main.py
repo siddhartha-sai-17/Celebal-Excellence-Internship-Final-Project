@@ -97,7 +97,8 @@ def generate_embeddings(model_type: str) -> None:
         # Initialize base model
         model = ModelLoader.load_embedding_model(
             model_name=settings.MODEL_NAME,
-            checkpoint_dir=checkpoint_path
+            checkpoint_dir=checkpoint_path,
+            is_baseline=(model_type == "baseline")
         )
         if model is None:
             app_logger.error(f"Could not load or build the model for source: {model_type}")
