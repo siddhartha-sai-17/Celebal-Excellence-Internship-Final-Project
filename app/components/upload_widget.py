@@ -21,7 +21,13 @@ def render_upload_widget() -> Tuple[Optional[Image.Image], Optional[str]]:
     Returns:
         A tuple of (loaded_pil_image, image_name) or (None, None).
     """
-    st.markdown("### 📤 Upload Fashion Product Image")
+    st.markdown(
+        '<div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 1.5rem; margin-bottom: 0.8rem;" class="fade-in">'
+        '<span style="font-size: 1.6rem; line-height: 1;">📤</span>'
+        '<span style="font-family: \'Outfit\', sans-serif; font-weight: 700; font-size: 1.35rem;">Upload Fashion Product Image</span>'
+        '</div>',
+        unsafe_allow_html=True
+    )
     uploaded_file = st.file_uploader(
         "Choose an image file (JPG, JPEG, PNG)...",
         type=["jpg", "jpeg", "png"],
