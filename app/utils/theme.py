@@ -2,7 +2,7 @@
 Module Description: Streamlit UI Theme Styles
 Purpose: Centralizes premium light and dark glassmorphism CSS templates for styling, animations, card styling, and custom overrides.
 Author: Technical Lead
-Version: 3.0.0
+Version: 3.1.0
 Dependencies: streamlit
 """
 
@@ -245,7 +245,7 @@ def inject_custom_css() -> None:
             }}
             .custom-subheader {{ font-size: 1rem; color: #475569; margin-bottom: 1.5rem; }}
 
-            /* ── Native Streamlit overrides ── */
+            /* ── Native Streamlit overrides (LIGHT MODE) ── */
             .stButton > button {{
                 background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
                 color: white !important; border: none !important;
@@ -275,9 +275,65 @@ def inject_custom_css() -> None:
             [data-testid="stSidebar"] [data-testid="stMarkdown"] div {{
                 color: #1e293b !important;
             }}
+            
             /* Streamlit slider track override for light mode */
             [data-testid="stSidebar"] .stSlider [data-testid="stSliderTrack"] {{
                 background: rgba(79,70,229,0.2) !important;
+            }}
+
+            /* Input Fields and Selectbox Dropdown overrides for Light Mode */
+            div[data-baseweb="select"] > div {{
+                background-color: #f1f5f9 !important;
+                color: #0f172a !important;
+                border: 1px solid rgba(0,0,0,0.12) !important;
+            }}
+            div[data-baseweb="select"] span, div[data-baseweb="select"] svg {{
+                color: #0f172a !important;
+                fill: #0f172a !important;
+            }}
+            
+            /* Dropdown overlay menu */
+            div[data-testid="stPopover"] div[role="dialog"], ul[role="listbox"] {{
+                background-color: #ffffff !important;
+                border: 1px solid rgba(0,0,0,0.1) !important;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.08) !important;
+            }}
+            ul[role="listbox"] li, ul[role="listbox"] div {{
+                color: #0f172a !important;
+                background-color: #ffffff !important;
+            }}
+            ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] {{
+                background-color: #f1f5f9 !important;
+                color: #4f46e5 !important;
+            }}
+
+            /* File Uploader styling overrides for Light Mode */
+            [data-testid="stFileUploader"] {{
+                background-color: #f8fafc !important;
+                border: 2px dashed rgba(79,70,229,0.25) !important;
+                border-radius: 18px !important;
+                padding: 1.5rem !important;
+            }}
+            [data-testid="stFileUploader"] > div {{
+                background-color: #f8fafc !important;
+            }}
+            [data-testid="stFileUploader"] section {{
+                background-color: #f1f5f9 !important;
+                border: 1px solid rgba(0,0,0,0.06) !important;
+                border-radius: 12px !important;
+                padding: 0.8rem 1.2rem !important;
+            }}
+            [data-testid="stFileUploader"] section * {{
+                color: #334155 !important;
+            }}
+            [data-testid="stFileUploader"] button {{
+                background-color: #ffffff !important;
+                border: 1px solid rgba(0,0,0,0.12) !important;
+                color: #0f172a !important;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+            }}
+            [data-testid="stFileUploader"] button:hover {{
+                background-color: #f8fafc !important;
             }}
 
             [data-testid="stTable"] th {{ background: rgba(79,70,229,0.08) !important; color: #4f46e5 !important; font-weight: 650 !important; font-size: 0.82rem !important; text-transform: uppercase; letter-spacing: 0.05em; }}
@@ -285,8 +341,6 @@ def inject_custom_css() -> None:
             [data-testid="stTable"] tr:hover td {{ background: rgba(79,70,229,0.03) !important; }}
 
             [data-testid="stExpander"] {{ background: rgba(255, 255, 255, 0.5) !important; border: 1px solid rgba(0, 0, 0, 0.06) !important; border-radius: 14px !important; }}
-            [data-testid="stFileUploader"] {{ background: rgba(255, 255, 255, 0.6) !important; border: 2px dashed rgba(79,70,229,0.25) !important; border-radius: 18px !important; }}
-            [data-testid="stFileUploader"]:hover {{ border-color: rgba(79,70,229,0.6) !important; }}
             .stSpinner > div > div {{ border-top-color: #4f46e5 !important; }}
             hr {{ border-color: rgba(0,0,0,0.06) !important; margin: 1.5rem 0 !important; }}
 
@@ -297,7 +351,7 @@ def inject_custom_css() -> None:
 
             /* Text compatibility overrides */
             div, p, span, li, label, h1, h2, h3, h4, h5, h6 {{
-                color: #0f172a !important;
+                color: #0f172a;
             }}
 
             .fade-in {{ animation: fadeIn 0.5s ease forwards; }}
@@ -528,7 +582,7 @@ def inject_custom_css() -> None:
             }}
             .custom-subheader {{ font-size: 1rem; color: rgba(148,163,184,0.8); margin-bottom: 1.5rem; }}
 
-            /* ── Native Streamlit overrides ── */
+            /* ── Native Streamlit overrides (DARK MODE) ── */
             .stButton > button {{
                 background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
                 color: white !important; border: none !important;
@@ -558,13 +612,63 @@ def inject_custom_css() -> None:
                 color: #e2e8f0 !important;
             }}
 
+            /* Input Fields and Selectbox overrides for Dark Mode */
+            div[data-baseweb="select"] > div {{
+                background-color: rgba(255,255,255,0.03) !important;
+                color: #e2e8f0 !important;
+                border: 1px solid rgba(255,255,255,0.08) !important;
+            }}
+            div[data-baseweb="select"] span, div[data-baseweb="select"] svg {{
+                color: #e2e8f0 !important;
+                fill: #e2e8f0 !important;
+            }}
+            
+            div[data-testid="stPopover"] div[role="dialog"], ul[role="listbox"] {{
+                background-color: #0c132c !important;
+                border: 1px solid rgba(255,255,255,0.08) !important;
+            }}
+            ul[role="listbox"] li, ul[role="listbox"] div {{
+                color: #e2e8f0 !important;
+                background-color: #0c132c !important;
+            }}
+            ul[role="listbox"] li:hover, ul[role="listbox"] li[aria-selected="true"] {{
+                background-color: rgba(99,102,241,0.2) !important;
+                color: #a78bfa !important;
+            }}
+
+            /* File Uploader styling overrides for Dark Mode */
+            [data-testid="stFileUploader"] {{
+                background-color: rgba(255,255,255,0.02) !important;
+                border: 2px dashed rgba(99,102,241,0.3) !important;
+                border-radius: 18px !important;
+                padding: 1.5rem !important;
+            }}
+            [data-testid="stFileUploader"] > div {{
+                background-color: transparent !important;
+            }}
+            [data-testid="stFileUploader"] section {{
+                background-color: rgba(255,255,255,0.03) !important;
+                border: 1px solid rgba(255,255,255,0.05) !important;
+                border-radius: 12px !important;
+                padding: 0.8rem 1.2rem !important;
+            }}
+            [data-testid="stFileUploader"] section * {{
+                color: rgba(148,163,184,0.9) !important;
+            }}
+            [data-testid="stFileUploader"] button {{
+                background-color: rgba(255,255,255,0.06) !important;
+                border: 1px solid rgba(255,255,255,0.12) !important;
+                color: #e2e8f0 !important;
+            }}
+            [data-testid="stFileUploader"] button:hover {{
+                background-color: rgba(255,255,255,0.1) !important;
+            }}
+
             [data-testid="stTable"] th {{ background: rgba(99,102,241,0.15) !important; color: #a78bfa !important; font-weight: 600 !important; font-size: 0.82rem !important; text-transform: uppercase; letter-spacing: 0.05em; }}
             [data-testid="stTable"] td {{ color: #cbd5e1 !important; font-size: 0.88rem !important; }}
             [data-testid="stTable"] tr:hover td {{ background: rgba(99,102,241,0.06) !important; }}
 
             [data-testid="stExpander"] {{ background: rgba(255,255,255,0.03) !important; border: 1px solid rgba(255,255,255,0.07) !important; border-radius: 14px !important; }}
-            [data-testid="stFileUploader"] {{ background: rgba(255,255,255,0.03) !important; border: 2px dashed rgba(99,102,241,0.35) !important; border-radius: 18px !important; }}
-            [data-testid="stFileUploader"]:hover {{ border-color: rgba(99,102,241,0.7) !important; }}
             .stSpinner > div > div {{ border-top-color: #6366f1 !important; }}
             hr {{ border-color: rgba(255,255,255,0.07) !important; margin: 1.5rem 0 !important; }}
 
