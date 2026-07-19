@@ -35,7 +35,8 @@ class SessionManager:
                 "season": "All",
                 "usage": "All"
             },
-            "enable_faiss": settings.ENABLE_FAISS
+            "enable_faiss": settings.ENABLE_FAISS,
+            "theme_mode": "dark"
         }
 
         for key, value in defaults.items():
