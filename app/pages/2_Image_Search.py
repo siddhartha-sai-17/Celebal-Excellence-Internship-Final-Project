@@ -127,8 +127,13 @@ def main() -> None:
                     st.session_state["recommendations"] = recs
                     st.session_state["latencies"] = latencies
                     
-                    from recommendation.ranking_engine import RankingEngine
-                    trace_text = "\n".join(RankingEngine.last_trace)
+                    # Safely load trace from session state or static attribute
+                    trace_list = st.session_state.get("search_trace")
+                    if not trace_list:
+                        from recommendation.ranking_engine import RankingEngine
+                        trace_list = getattr(RankingEngine, "last_trace", ["(No class-level trace found)"])
+                    trace_text = "\n".join(trace_list)
+                    
                     st.info(
                         f"⚙️ **Main Search Debugger:**\n\n"
                         f"Found **{len(recs)}** results.\n\n"

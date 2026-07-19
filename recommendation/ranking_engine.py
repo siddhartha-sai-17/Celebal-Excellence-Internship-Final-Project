@@ -124,6 +124,13 @@ class RankingEngine:
         if scored:
             trace.append(f"  Top 3 scored: {scored[0][0]:.4f}, {scored[1][0]:.4f}, {scored[2][0]:.4f}" if len(scored) >= 3 else f"  Scored size: {len(scored)}")
         
+        # Save to streamlit session state to bypass module caching issues
+        try:
+            import streamlit as st
+            st.session_state["search_trace"] = trace
+        except Exception:
+            pass
+        
         RankingEngine.last_trace = trace
 
 
