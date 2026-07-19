@@ -198,20 +198,76 @@ def main() -> None:
                                 
                                 # Category checks
                                 current_cat = st.session_state["filters"].get("category", "All")
-                                lines.append(f"Current Category Filter: {current_cat}")
+                                current_gender = st.session_state["filters"].get("gender", "All")
+                                current_color = st.session_state["filters"].get("color", "All")
+                                current_season = st.session_state["filters"].get("season", "All")
+                                current_usage = st.session_state["filters"].get("usage", "All")
                                 
-                                # Check matches in metadata
-                                if "articleType" in db_meta.columns:
-                                    cat_mask = db_meta["articleType"].str.lower() == current_cat.lower()
-                                    cat_count = cat_mask.sum()
-                                    lines.append(f"Database rows matching '{current_cat}': {cat_count}")
-                                    if cat_count > 0:
-                                        cat_scores = scores[cat_mask]
-                                        lines.append(f"  Filtered scores Min/Max/Mean: {np.min(cat_scores):.4f} / {np.max(cat_scores):.4f} / {np.mean(cat_scores):.4f}")
-                                else:
-                                    lines.append("ERROR: 'articleType' column missing in metadata!")
+                                lines.append(f"Active Filters — Cat: {current_cat}, Gen: {current_gender}, Col: {current_color}, Sea: {current_season}, Usg: {current_usage}")
+                                
+                                # Step-by-step trace of RankingEngine.rank_and_filter logic
+                                scored_trace = []
+                                match_cat_count = 0
+                                match_gender_count = 0
+                                match_color_count = 0
+                                match_season_count = 0
+                                match_usage_count = 0
+                                
+                                for idx, row in db_meta.iterrows():
+                                    # Category filter
+                                    is_cat_match = True
+                                    if current_cat != "All":
+                                        is_cat_match = str(row.get("articleType", "")).lower() == current_cat.lower()
+                                    if is_cat_match:
+                                        match_cat_count += 1
+                                        
+                                    # Gender filter
+                                    is_gen_match = True
+                                    if current_gender != "All":
+                                        is_gen_match = str(row.get("gender", "")).lower() == current_gender.lower()
+                                    if is_cat_match and is_gen_match:
+                                        match_gender_count += 1
+                                        
+                                    # Color filter
+                                    is_col_match = True
+                                    if current_color != "All":
+                                        is_col_match = str(row.get("baseColour", "")).lower() == current_color.lower()
+                                    if is_cat_match and is_gen_match and is_col_match:
+                                        match_color_count += 1
+                                        
+                                    # Season filter
+                                    is_sea_match = True
+                                    if current_season != "All":
+                                        is_sea_match = str(row.get("season", "")).lower() == current_season.lower()
+                                    if is_cat_match and is_gen_match and is_col_match and is_sea_match:
+                                        match_season_count += 1
+                                        
+                                    # Usage filter
+                                    is_usg_match = True
+                                    if current_usage != "All":
+                                        is_usg_match = str(row.get("usage", "")).lower() == current_usage.lower()
+                                    if is_cat_match and is_gen_match and is_col_match and is_sea_match and is_usg_match:
+                                        match_usage_count += 1
+                                        scored_trace.append((float(scores[idx]), str(row["id"]), row))
+                                
+                                lines.append(f"Trace Counters:")
+                                lines.append(f"  Rows matching Category filter: {match_cat_count}")
+                                lines.append(f"  Rows matching Cat + Gender: {match_gender_count}")
+                                lines.append(f"  Rows matching Cat + Gen + Color: {match_color_count}")
+                                lines.append(f"  Rows matching Cat + Gen + Col + Season: {match_season_count}")
+                                lines.append(f"  Rows matching All Filters (scored size): {len(scored_trace)}")
+                                
+                                if scored_trace:
+                                    scored_trace.sort(key=lambda x: x[0], reverse=True)
+                                    lines.append(f"  Top 3 scored after filters: {scored_trace[0][0]:.4f}, {scored_trace[1][0]:.4f}, {scored_trace[2][0]:.4f}" if len(scored_trace) >= 3 else f"  Scored count: {len(scored_trace)}")
+                                    
+                                    # Threshold check
+                                    thresh = st.session_state["similarity_threshold"]
+                                    filtered_count = sum(1 for s, _, _ in scored_trace if s >= thresh)
+                                    lines.append(f"  Rows passing similarity threshold ({thresh}): {filtered_count}")
                                     
                             st.code("\n".join(lines))
+
                         except Exception as debug_err:
                             st.error(f"Diagnostics runner error: {debug_err}")
                     # ──────────────────────────────────────────────────────────────
