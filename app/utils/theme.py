@@ -32,7 +32,12 @@ def inject_custom_css() -> None:
             /* ── Hide Streamlit chrome ── */
             #MainMenu {{visibility: hidden;}}
             footer {{visibility: hidden;}}
-            header {{visibility: hidden;}}
+            [data-testid="stHeader"] {{
+                background: transparent !important;
+            }}
+            [data-testid="stDeployButton"] {{
+                visibility: hidden !important;
+            }}
 
             /* ── Page Background ── */
             .stApp {{
@@ -371,7 +376,12 @@ def inject_custom_css() -> None:
             /* ── Hide Streamlit chrome ── */
             #MainMenu {{visibility: hidden;}}
             footer {{visibility: hidden;}}
-            header {{visibility: hidden;}}
+            [data-testid="stHeader"] {{
+                background: transparent !important;
+            }}
+            [data-testid="stDeployButton"] {{
+                visibility: hidden !important;
+            }}
 
             /* ── Page Background ── */
             .stApp {{
