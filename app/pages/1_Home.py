@@ -119,29 +119,40 @@ def main() -> None:
     raw_images_dir = settings.DATASET_DIRECTORY / "images"
     cloud_mode = not raw_styles_csv.exists() or not raw_images_dir.exists()
 
+    import os
+    kaggle_configured = (
+        ("KAGGLE_USERNAME" in os.environ and "KAGGLE_KEY" in os.environ) or
+        (hasattr(st, "secrets") and "KAGGLE_USERNAME" in st.secrets and "KAGGLE_KEY" in st.secrets)
+    )
+
     if cloud_mode:
-        from utils.kaggle_downloader import download_fashion_dataset, dataset_is_present
-        st.info(
-            "⬇️ **Dataset not found locally.** Attempting to download from Kaggle. "
-            "This happens only once and may take 1–3 minutes depending on your connection."
-        )
-        with st.spinner("📦 Downloading Fashion Product Images dataset from Kaggle..."):
-            success = download_fashion_dataset(settings.DATASET_DIRECTORY)
-        if success and dataset_is_present(raw_images_dir, raw_styles_csv):
-            st.success("✅ Dataset downloaded successfully! Reloading page...")
-            st.rerun()
-        else:
-            st.warning(
-                "⚠️ **Kaggle download could not complete.** "
-                "The app is running in **Cloud Demo Mode** using pre-computed embeddings. "
-                "Image Search and Model Comparison are still fully functional. "
-                "To enable full dataset features, add your `KAGGLE_USERNAME` and `KAGGLE_KEY` "
-                "to the Streamlit app Secrets (Settings → Secrets)."
+        if kaggle_configured:
+            from utils.kaggle_downloader import download_fashion_dataset, dataset_is_present
+            st.info(
+                "⬇️ **Dataset not found locally.** Attempting to download from Kaggle using credentials. "
+                "This happens only once and may take 1–3 minutes depending on your connection."
             )
-            _render_content_cloud_mode()
-            render_footer()
-            return
+            with st.spinner("📦 Downloading Fashion Product Images dataset from Kaggle..."):
+                success = download_fashion_dataset(settings.DATASET_DIRECTORY)
+            if success and dataset_is_present(raw_images_dir, raw_styles_csv):
+                st.success("✅ Dataset downloaded successfully! Reloading page...")
+                st.rerun()
+            else:
+                st.warning(
+                    "⚠️ **Kaggle download could not complete.** Please check that your "
+                    "`KAGGLE_USERNAME` and `KAGGLE_KEY` secrets are valid."
+                )
+        else:
+            st.success(
+                "🚀 **Cloud Mode Active**: Pre-compiled model embeddings and 1,750 subset "
+                "product images are loaded directly from the repository."
+            )
+        
+        _render_content_cloud_mode()
+        render_footer()
+        return
     else:
+
         from preprocessing.dataset_validator import DatasetValidator
         from preprocessing.dataset_subset import DatasetSubsetGenerator
         validator = DatasetValidator(raw_styles_csv, raw_images_dir)
