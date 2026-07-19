@@ -45,6 +45,31 @@ def main() -> None:
         st.session_state["query_image"] = img_pil
         st.session_state["query_image_path"] = img_name
 
+        # ── Smart category hint from filename ─────────────────────────────────
+        # Map filename keywords → the exact articleType values in the dataset
+        _KEYWORD_MAP = {
+            "watch": "Watches", "watches": "Watches",
+            "shirt": "Shirts", "shirts": "Shirts",
+            "tshirt": "Tshirts", "t-shirt": "Tshirts", "tee": "Tshirts",
+            "jeans": "Jeans", "denim": "Jeans",
+            "sandal": "Sandals", "sandals": "Sandals", "slipper": "Sandals",
+            "shoe": "Casual Shoes", "shoes": "Casual Shoes", "sneaker": "Casual Shoes",
+            "bag": "Handbags", "handbag": "Handbags", "purse": "Handbags",
+        }
+        current_category_filter = st.session_state.get("filters", {}).get("category", "All")
+        if current_category_filter == "All" and img_name:
+            name_lower = img_name.lower().replace("_", " ").replace("-", " ")
+            suggested_cat = next(
+                (cat for kw, cat in _KEYWORD_MAP.items() if kw in name_lower), None
+            )
+            if suggested_cat:
+                st.warning(
+                    f"🎯 **Filename hint detected: looks like a '{suggested_cat}' image.** "
+                    f"For accurate results, set **Category = '{suggested_cat}'** "
+                    f"in the Filters panel on the left sidebar, then click Generate Recommendations."
+                )
+        # ─────────────────────────────────────────────────────────────────────
+
         # Trigger search button
         col_run, col_reset = st.columns([1, 4])
         
