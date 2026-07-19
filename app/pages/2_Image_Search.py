@@ -101,6 +101,16 @@ def main() -> None:
             # Recompute only on click or if empty
             if run_clicked or st.session_state["recommendations"] is None:
                 with st.spinner("Analyzing image features and matching products..."):
+                    # Force reload modules to bypass Streamlit Cloud stale memory caches
+                    import importlib
+                    import recommendation.ranking_engine
+                    import recommendation.recommendation_service
+                    import recommendation.recommendation_engine
+                    importlib.reload(recommendation.ranking_engine)
+                    importlib.reload(recommendation.recommendation_service)
+                    importlib.reload(recommendation.recommendation_engine)
+                    
+                    from recommendation.recommendation_engine import RecommendationEngine
                     engine = RecommendationEngine()
                     filters = st.session_state["filters"]
                     
