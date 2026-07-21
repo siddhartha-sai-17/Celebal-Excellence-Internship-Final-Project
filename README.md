@@ -411,20 +411,6 @@ The benchmark reports generated on our balanced subset show the following perfor
 
 ---
 
-## ❓ FAQ
-#### Q: How do I resolve a `ModuleNotFoundError` during tests?
-A: We have configured a dynamic `conftest.py` in the `tests/` directory. Simply run `pytest` from the root folder and it will automatically append the workspace directory to your python path.
-
-#### Q: How can I change the default weights directory?
-A: You can update the `BASE_DIR` or paths in `config/settings.py` directly.
-
----
-
-## 📄 License
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
-
----
-
 ## 📧 Contact Information
 * **Lead Engineer**: Siddhartha Sai
 * **GitHub**: [@siddhartha-sai-17](https://github.com/siddhartha-sai-17)
