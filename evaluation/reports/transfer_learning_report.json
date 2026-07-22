@@ -17,5 +17,5 @@
     "mrr_at_20": 0.7979365079365078,
     "hit_rate_at_20": 1.0,
     "ndcg_at_20": 0.8520905901811979,
-    "average_recommendation_time_sec": 0.7097353933330548
+    "average_recommendation_time_sec": 0.529733713332098
 }

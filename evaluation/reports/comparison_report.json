@@ -1,24 +1,24 @@
 {
     "baseline": {
-        "precision_at_5": 0.0,
-        "recall_at_5": 0.0,
-        "ap_at_5": 0.0,
-        "mrr_at_5": 0.0,
-        "hit_rate_at_5": 0.0,
-        "ndcg_at_5": 0.0,
-        "precision_at_10": 0.0,
-        "recall_at_10": 0.0,
-        "ap_at_10": 0.0,
-        "mrr_at_10": 0.0,
-        "hit_rate_at_10": 0.0,
-        "ndcg_at_10": 0.0,
-        "precision_at_20": 0.0,
-        "recall_at_20": 0.0,
-        "ap_at_20": 0.0,
-        "mrr_at_20": 0.0,
-        "hit_rate_at_20": 0.0,
-        "ndcg_at_20": 0.0,
-        "average_recommendation_time_sec": 0.7355687899980694
+        "precision_at_5": 0.7066666666666668,
+        "recall_at_5": 0.014190093708165995,
+        "ap_at_5": 0.7919907407407406,
+        "mrr_at_5": 0.8111111111111111,
+        "hit_rate_at_5": 0.9333333333333333,
+        "ndcg_at_5": 0.8397495169791613,
+        "precision_at_10": 0.6900000000000001,
+        "recall_at_10": 0.02771084337349398,
+        "ap_at_10": 0.7720948496682623,
+        "mrr_at_10": 0.8166666666666667,
+        "hit_rate_at_10": 0.9666666666666667,
+        "ndcg_at_10": 0.8470954067214105,
+        "precision_at_20": 0.6583333333333333,
+        "recall_at_20": 0.052878179384203486,
+        "ap_at_20": 0.7481502922238544,
+        "mrr_at_20": 0.8194444444444444,
+        "hit_rate_at_20": 1.0,
+        "ndcg_at_20": 0.8544695394444999,
+        "average_recommendation_time_sec": 0.6105684766662307
     },
     "transfer_learning": {
         "precision_at_5": 0.72,
@@ -39,7 +39,7 @@
         "mrr_at_20": 0.7979365079365078,
         "hit_rate_at_20": 1.0,
         "ndcg_at_20": 0.8520905901811979,
-        "average_recommendation_time_sec": 0.7097353933330548
+        "average_recommendation_time_sec": 0.529733713332098
     },
     "siamese": {
         "precision_at_5": 0.7066666666666667,
@@ -60,6 +60,6 @@
         "mrr_at_20": 0.7972222222222222,
         "hit_rate_at_20": 1.0,
         "ndcg_at_20": 0.8411574501574215,
-        "average_recommendation_time_sec": 0.6997564133353686
+        "average_recommendation_time_sec": 0.5911733299988555
     }
 }

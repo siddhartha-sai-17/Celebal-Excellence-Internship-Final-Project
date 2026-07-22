@@ -1,38 +1,38 @@
 {
     "baseline": {
         "model_type": "baseline",
-        "cold_start_latency_sec": 5.2662499000143725,
-        "average_inference_latency_sec": 0.5073610599967651,
-        "average_similarity_search_latency_sec": 0.0007388999976683408,
-        "average_recommendation_latency_sec": 0.6302069400087931,
-        "p50_latency_sec": 0.5723806000023615,
-        "p95_latency_sec": 0.7631559800123796,
-        "average_memory_usage_mb": 0.0,
-        "peak_memory_usage_mb": 0.0,
-        "inference_fps": 1.5867803677091328
+        "cold_start_latency_sec": 4.273487400001613,
+        "average_inference_latency_sec": 0.3258829800004605,
+        "average_similarity_search_latency_sec": 0.021438199997646734,
+        "average_recommendation_latency_sec": 0.4872416999947745,
+        "p50_latency_sec": 0.4731630999885965,
+        "p95_latency_sec": 0.5669638600083999,
+        "average_memory_usage_mb": 708.57265625,
+        "peak_memory_usage_mb": 708.84375,
+        "inference_fps": 2.052369491385332
     },
     "transfer_learning": {
         "model_type": "transfer_learning",
-        "cold_start_latency_sec": 3.6877185000048485,
-        "average_inference_latency_sec": 0.4512167600041721,
-        "average_similarity_search_latency_sec": 0.0009007800079416483,
-        "average_recommendation_latency_sec": 0.554060979996575,
-        "p50_latency_sec": 0.5459564999910071,
-        "p95_latency_sec": 0.6275692599941977,
-        "average_memory_usage_mb": 0.0,
-        "peak_memory_usage_mb": 0.0,
-        "inference_fps": 1.8048554872176374
+        "cold_start_latency_sec": 2.7714615000004414,
+        "average_inference_latency_sec": 0.33191445999545977,
+        "average_similarity_search_latency_sec": 0.0006005999981425703,
+        "average_recommendation_latency_sec": 0.4946059600042645,
+        "p50_latency_sec": 0.4529855000146199,
+        "p95_latency_sec": 0.6846973800100385,
+        "average_memory_usage_mb": 842.4453125,
+        "peak_memory_usage_mb": 843.00390625,
+        "inference_fps": 2.0218114637991382
     },
     "siamese": {
         "model_type": "siamese",
-        "cold_start_latency_sec": 3.6427789000154007,
-        "average_inference_latency_sec": 0.43597262000548653,
-        "average_similarity_search_latency_sec": 0.0007698800007347017,
-        "average_recommendation_latency_sec": 0.556305259995861,
-        "p50_latency_sec": 0.5380764000001363,
-        "p95_latency_sec": 0.5995961199863814,
-        "average_memory_usage_mb": 0.0,
-        "peak_memory_usage_mb": 0.0,
-        "inference_fps": 1.7975742311108835
+        "cold_start_latency_sec": 2.8534950999892317,
+        "average_inference_latency_sec": 0.38690812000422736,
+        "average_similarity_search_latency_sec": 0.0007568000059109181,
+        "average_recommendation_latency_sec": 0.5002450999978464,
+        "p50_latency_sec": 0.48341939999954775,
+        "p95_latency_sec": 0.5883225800003856,
+        "average_memory_usage_mb": 950.3078125,
+        "peak_memory_usage_mb": 950.3828125,
+        "inference_fps": 1.9990200803652152
     }
 }
