@@ -21,7 +21,6 @@ from app.components.footer import render_footer
 
 LOG_FILES = {
     "🖥️ App Log":            "app.log",
-    "🏋️ Training Log":       "training.log",
     "⚡ Performance Log":    "performance.log",
     "🔍 Recommendation Log": "recommendation.log",
     "🚨 Exception Log":      "exception.log",

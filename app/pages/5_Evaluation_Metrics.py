@@ -80,10 +80,9 @@ def main() -> None:
         return
 
     # Tabs for different metrics categories
-    tab_acc, tab_rank, tab_train = st.tabs([
+    tab_acc, tab_rank = st.tabs([
         "🎯 Retrieval Accuracy",
-        "🏆 Rank & Retrieval Quality",
-        "📈 Model Training Logs"
+        "🏆 Rank & Retrieval Quality"
     ])
 
     # Model names mapping
@@ -211,107 +210,6 @@ def main() -> None:
                 "MRR @ 20": f"{m_val.get('mrr_at_20', 0.0):.3f}"
             })
         st.table(pd.DataFrame(mrr_data))
-
-    # ── Tab 3: Model Training Logs ─────────────────────────────────
-    with tab_train:
-        st.markdown('<div class="section-header">📈 Neural Network Training Performance</div>', unsafe_allow_html=True)
-        st.markdown(
-            '<p style="font-size:0.85rem;color:#94a3b8;margin-bottom:1rem;">'
-            'Visualizes training loss curves extracted directly from the checkpoints of the fine-tuned and Siamese neural models.</p>',
-            unsafe_allow_html=True
-        )
-
-        # Locate latest checkpoints
-        transfer_dir = find_latest_checkpoint_dir("resnet50_transfer_v1_")
-        siamese_dir = find_latest_checkpoint_dir("resnet50_siamese_v1_")
-
-        transfer_history = load_json(transfer_dir / "history.json") if transfer_dir else {}
-        siamese_history = load_json(siamese_dir / "history.json") if siamese_dir else {}
-
-        if not transfer_history and not siamese_history:
-            st.info("No training history records found in checkpoints.")
-            render_footer()
-            return
-
-        plt.style.use("dark_background")
-
-        # Transfer Learning curves
-        if transfer_history:
-            st.markdown('<div class="section-header" style="font-size:1.1rem; border-left-color: #818cf8;">🔬 Transfer Learning Classification Training</div>', unsafe_allow_html=True)
-            col_tl_loss, col_tl_acc = st.columns(2)
-
-            epochs_tl = list(range(1, len(transfer_history.get("loss", [])) + 1))
-            
-            with col_tl_loss:
-                fig, ax = plt.subplots(figsize=(6, 4))
-                ax.plot(epochs_tl, transfer_history.get("loss", []), label="Train Loss", marker='o', color="#818cf8", linewidth=2)
-                ax.plot(epochs_tl, transfer_history.get("val_loss", []), label="Val Loss", marker='x', color="#fbbf24", linestyle='--', linewidth=2)
-                ax.set_title("Cross-Entropy Loss History", fontsize=10, pad=10, color="#e2e8f0")
-                ax.set_xlabel("Epochs", fontsize=8, color="#94a3b8")
-                ax.set_ylabel("Loss", fontsize=8, color="#94a3b8")
-                ax.grid(True, color="#ffffff", alpha=0.06, linestyle="-")
-                ax.set_xticks(epochs_tl)
-                ax.legend(frameon=True, facecolor=(0, 0, 0, 0.5), edgecolor=(1, 1, 1, 0.1))
-                fig.patch.set_facecolor('none')
-                ax.set_facecolor('none')
-                st.pyplot(fig)
-
-            with col_tl_acc:
-                fig, ax = plt.subplots(figsize=(6, 4))
-                ax.plot(epochs_tl, [a * 100 for a in transfer_history.get("accuracy", [])], label="Train Accuracy", marker='o', color="#34d399", linewidth=2)
-                ax.plot(epochs_tl, [a * 100 for a in transfer_history.get("val_accuracy", [])], label="Val Accuracy", marker='x', color="#fbbf24", linestyle='--', linewidth=2)
-                ax.set_title("Classification Accuracy History (%)", fontsize=10, pad=10, color="#e2e8f0")
-                ax.set_xlabel("Epochs", fontsize=8, color="#94a3b8")
-                ax.set_ylabel("Accuracy (%)", fontsize=8, color="#94a3b8")
-                ax.grid(True, color="#ffffff", alpha=0.06, linestyle="-")
-                ax.set_xticks(epochs_tl)
-                ax.legend(frameon=True, facecolor=(0, 0, 0, 0.5), edgecolor=(1, 1, 1, 0.1))
-                fig.patch.set_facecolor('none')
-                ax.set_facecolor('none')
-                st.pyplot(fig)
-
-        # Siamese curves
-        if siamese_history:
-            st.markdown('<div class="section-header" style="font-size:1.1rem; border-left-color: #60a5fa;">⚡ Siamese Metric Learning Training</div>', unsafe_allow_html=True)
-            col_s_loss, col_s_stats = st.columns([2, 1])
-
-            epochs_s = list(range(1, len(siamese_history.get("loss", [])) + 1))
-
-            with col_s_loss:
-                fig, ax = plt.subplots(figsize=(7, 3.5))
-                ax.plot(epochs_s, siamese_history.get("loss", []), label="Train Loss", marker='o', color="#60a5fa", linewidth=2)
-                ax.plot(epochs_s, siamese_history.get("val_loss", []), label="Val Loss", marker='x', color="#f87171", linestyle='--', linewidth=2)
-                ax.set_title("Margin Contrastive Loss History", fontsize=10, pad=10, color="#e2e8f0")
-                ax.set_xlabel("Epochs", fontsize=8, color="#94a3b8")
-                ax.set_ylabel("Contrastive Loss", fontsize=8, color="#94a3b8")
-                ax.grid(True, color="#ffffff", alpha=0.06, linestyle="-")
-                ax.set_xticks(epochs_s)
-                ax.legend(frameon=True, facecolor=(0, 0, 0, 0.5), edgecolor=(1, 1, 1, 0.1))
-                fig.patch.set_facecolor('none')
-                ax.set_facecolor('none')
-                st.pyplot(fig)
-
-            with col_s_stats:
-                # Load metadata
-                siamese_meta = load_json(siamese_dir / "metadata.json") if siamese_dir else {}
-                
-                st.markdown('<div style="font-weight:600;color:#e2e8f0;font-size:0.9rem;margin-bottom:0.8rem;">Siamese Metadata</div>', unsafe_allow_html=True)
-                metrics = [
-                    ("Model Type", siamese_meta.get("model_type", "Siamese (Functional)")),
-                    ("Margin Parameter", str(siamese_meta.get("margin", "0.5"))),
-                    ("Preloaded RAM Cache", "Enabled (✓)"),
-                    ("Optimiser", "Adam"),
-                    ("Backbone state", "Frozen (22x Speedup)"),
-                ]
-                for key, val in metrics:
-                    st.markdown(
-                        f'<div style="display:flex;justify-content:space-between;padding:0.4rem 0;'
-                        f'border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.78rem;">'
-                        f'<span style="color:#94a3b8;">{key}</span>'
-                        f'<span style="font-weight:600;color:#60a5fa;">{val}</span>'
-                        f'</div>',
-                        unsafe_allow_html=True
-                    )
 
     render_footer()
 
